@@ -6,11 +6,12 @@ Anomaly Detection in Time Series Data (Machine Learning Integration)
 
 Data:
 The data set we are using is too large to upload so here is the link to the data instead: https://data.austintexas.gov/Transportation-and-Mobility/Radar-Traffic-Counts/i626-g7ub
-For our computers, the dataset was too large to save in Excel, so only the first 20,000 rows were used in this project. All variable descriptions can be found at the link, however, some were excluded from the analysis as they proved to not be beneficial.
+For our computers, the dataset was too large to save in Excel, so only the first 1 million rows were used in this project. All variable descriptions can be found at the link, however, some were excluded from the analysis as they proved to not be beneficial.
 
 Packages:
 SciPy: For regression analysis and signal noise cancellation
 Numpy: Numeric calculations
+Pandas: csv import and data reading
 SciKit-learn: For machine learning algorithms and evaluating models/data
 Matplotlib: To visualize the results in plots, figures, images, etc
 
