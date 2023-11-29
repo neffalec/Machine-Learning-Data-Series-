@@ -8,10 +8,23 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 import matplotlib.pyplot as plt
 
+### SECTION 1 ###
+file_path = 'Radar_Traffic_Counts.csv'
+raw_data = open(file_path)
+reader = csv.reader(raw_data)
+speed_data_list = []
+# Skip the header for ease of data processing
+next(reader)
+for row in reader:
+    speed_data_list.append(row)
+raw_data.close()
+
+# Convert data to a useable format, in this case an array from Numpy
+data_sample = np.array(speed_data_list)
 #loading and preprocessing the dataset
-file_path = r"C:\Users\mayon\Documents\Test RadarCounts.xlsx"
-#file_path_shortened = r"C:\Users\mayon\Documents\Radar_Traffic_Counts.xlsx"
-data_sample = pd.read_excel(file_path)
+#file_path = r"C:\Users\mayon\Documents\Test RadarCounts.xlsx"
+# file_path = r"C:\Users\mayon\Documents\Radar_Traffic_Counts.xlsx"
+# data_sample = pd.read_excel(file_path)
 data_sample['Read Date'] = pd.to_datetime(data_sample['Read Date'], format='%m/%d/%Y %H:%M', errors='coerce')
 categorical_columns = ['Intersection Name', 'Lane', 'Direction']
 numerical_columns = ['Volume', 'Occupancy', 'Speed', 'Month', 'Day', 'Year', 'Hour', 'Minute', 'Day of Week']
@@ -23,7 +36,9 @@ pipeline = Pipeline(steps=[('preprocessor', preprocessor)])
 #apply noise filtering to the 'Speed' data
 data_sample['Speed_Smoothed'] = savgol_filter(data_sample['Speed'], window_length=51, polyorder=3)
 
-#APPROACH 3: WHEN ARE PEOPLE BREAKING THE NORM? (BY THE HOUR)
+### SECTION 2 ###
+
+#APPROACH: WHEN ARE PEOPLE BREAKING THE NORM? (BY THE HOUR)
 #calculate average speeds per Intersection-Hour segment
 grouped_data = data_sample.groupby(['Intersection Name', 'Hour'])
 average_speeds = grouped_data['Speed'].mean().reset_index(name='Average Speed')
@@ -43,6 +58,8 @@ average_speeds['Anomaly'] = average_speed_anomalies == -1
 anomaly_mapping = dict(zip(average_speeds[['Intersection Name', 'Hour']].apply(tuple, axis=1), average_speeds['Anomaly']))
 #apply the mapping to the original data
 data_sample['Anomaly'] = data_sample.apply(lambda row: anomaly_mapping.get((row['Intersection Name'], row['Hour']), False), axis=1)
+
+### SECTION 3 ###
 
 #Output results
 print("Total number of anomalous segments detected:", sum(average_speeds['Anomaly']))
