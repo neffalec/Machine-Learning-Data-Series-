@@ -10,23 +10,11 @@ from sklearn.pipeline import Pipeline
 import matplotlib.pyplot as plt
 
 ### SECTION 1 ###
+#loading and preprocessing the dataset
 #file_path = 'Radar_Traffic_Counts.csv'
 file_path = 'Test RadarCounts.csv'
-raw_data = open(file_path)
-reader = csv.reader(raw_data)
-speed_data_list = []
-# Skip the header for ease of data processing
-next(reader)
-for row in reader:
-    speed_data_list.append(row)
-raw_data.close()
-
-# Convert data to a useable format, in this case an array from Numpy
-data_sample = np.array(speed_data_list)
-#loading and preprocessing the dataset
-#file_path = r"C:\Users\mayon\Documents\Test RadarCounts.xlsx"
-# file_path = r"C:\Users\mayon\Documents\Radar_Traffic_Counts.xlsx"
-# data_sample = pd.read_excel(file_path)
+#Read the data from csv using Pandas
+data_sample = pd.read_csv(file_path)
 data_sample['Read Date'] = pd.to_datetime(data_sample['Read Date'], format='%m/%d/%Y %H:%M', errors='coerce')
 categorical_columns = ['Intersection Name', 'Lane', 'Direction']
 numerical_columns = ['Volume', 'Occupancy', 'Speed', 'Month', 'Day', 'Year', 'Hour', 'Minute', 'Day of Week']
@@ -38,26 +26,25 @@ pipeline = Pipeline(steps=[('preprocessor', preprocessor)])
 #apply noise filtering to the 'Speed' data
 data_sample['Speed_Smoothed'] = savgol_filter(data_sample['Speed'], window_length=51, polyorder=3)
 
-#APPROACH 3: WHEN ARE PEOPLE BREAKING THE NORM? (BY THE HOUR)
+#APPROACH: WHEN ARE PEOPLE BREAKING THE NORM? (BY THE HOUR)#
 #calculate average speeds per Intersection-Hour segment
 grouped_data = data_sample.groupby(['Intersection Name', 'Hour'])
 average_speeds = grouped_data['Speed'].mean().reset_index(name='Average Speed')
 count_readings = grouped_data['Speed'].count().reset_index(name='Count')
-#join the average speeds with the count of readings
-average_speeds = average_speeds.merge(count_readings, on=['Intersection Name', 'Hour'])
+average_speeds = average_speeds.merge(count_readings, on=['Intersection Name', 'Hour']) #join the average speeds with the count of readings
 
 #apply Isolation Forest model directly on the average speeds
-iso_forest_avg = IsolationForest(n_estimators=50, max_samples='auto', contamination=0.10, 
+iso_forest_avg = IsolationForest(n_estimators=100, max_samples='auto', contamination=0.10, 
                                  max_features=1.0, bootstrap=False, n_jobs=-1, random_state=42)
 iso_forest_avg.fit(average_speeds[['Average Speed']])  #using only the Average Speed column for anomaly detection
-#detect anomalies in average speeds
-average_speed_anomalies = iso_forest_avg.predict(average_speeds[['Average Speed']])
-#add anomaly flag to the average_speeds DataFrame
-average_speeds['Anomaly'] = average_speed_anomalies == -1
+
+average_speed_anomalies = iso_forest_avg.predict(average_speeds[['Average Speed']]) #detect anomalies in average speeds
+average_speeds['Anomaly'] = average_speed_anomalies == -1 #add anomaly flag to the average_speeds DataFrame
 #create a mapping from (Intersection Name, Hour) to Anomaly status
 anomaly_mapping = dict(zip(average_speeds[['Intersection Name', 'Hour']].apply(tuple, axis=1), average_speeds['Anomaly']))
 #apply the mapping to the original data
 data_sample['Anomaly'] = data_sample.apply(lambda row: anomaly_mapping.get((row['Intersection Name'], row['Hour']), False), axis=1)
+
 
 ### SECTION 3 ###
 
@@ -68,12 +55,11 @@ print("Preview of anomalous segments with additional details:")
 anomalous_segments = average_speeds[average_speeds['Anomaly']]
 print(anomalous_segments[['Intersection Name', 'Hour', 'Average Speed', 'Count']])
 
-# Count anomalies for each intersection
+#count the anomalies for each intersection to find top 3
 weighted_anomalies = average_speeds[average_speeds['Anomaly']].groupby('Intersection Name')['Count'].sum()
 top_anomalous_intersections = weighted_anomalies.nlargest(3).index
-
 #need to define the speed limits for each of the top intersections
-speed_limits = [60, 60, 45]
+speed_limits = [60, 60, 45] #manually entered, based on already ran data
 #set up the matplotlib figure for subplots
 fig, axes = plt.subplots(nrows=3, ncols=1)
 #meed to define the hour labels for the x-axis
@@ -110,7 +96,7 @@ for i, intersection in enumerate(top_anomalous_intersections):
     #filter data for the current intersection and for anomalies
     intersection_anomalous_data = data_sample[(data_sample['Intersection Name'] == intersection) & (data_sample['Anomaly'])]
     if not intersection_anomalous_data.empty:
-        #do the curve fitting
+        #do the curve fitting on volume vs speed
         popt, _ = curve_fit(linear_model, intersection_anomalous_data['Volume'], intersection_anomalous_data['Speed_Smoothed'])
         volume_range = np.linspace(intersection_anomalous_data['Volume'].min(), intersection_anomalous_data['Volume'].max(), 100)
         fitted_speed = linear_model(volume_range, *popt)
