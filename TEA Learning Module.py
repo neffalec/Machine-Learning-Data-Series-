@@ -23,7 +23,7 @@ pipeline = Pipeline(steps=[('preprocessor', preprocessor)])
 #apply noise filtering to the 'Speed' data
 data_sample['Speed_Smoothed'] = savgol_filter(data_sample['Speed'], window_length=51, polyorder=3)
 
-#APPROACH 3: WHEN ARE PEOPLE BREAKING THE NORM? (BY THE HOUR)
+#APPROACH: WHEN ARE PEOPLE BREAKING THE NORM? (BY THE HOUR)
 #calculate average speeds per Intersection-Hour segment
 grouped_data = data_sample.groupby(['Intersection Name', 'Hour'])
 average_speeds = grouped_data['Speed'].mean().reset_index(name='Average Speed')
