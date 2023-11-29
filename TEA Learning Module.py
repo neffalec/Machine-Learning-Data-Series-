@@ -2,6 +2,7 @@ from scipy.signal import savgol_filter
 from scipy.optimize import curve_fit
 from sklearn.ensemble import IsolationForest
 import numpy as np
+import csv
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -9,7 +10,8 @@ from sklearn.pipeline import Pipeline
 import matplotlib.pyplot as plt
 
 ### SECTION 1 ###
-file_path = 'Radar_Traffic_Counts.csv'
+#file_path = 'Radar_Traffic_Counts.csv'
+file_path = 'Test RadarCounts.csv'
 raw_data = open(file_path)
 reader = csv.reader(raw_data)
 speed_data_list = []
