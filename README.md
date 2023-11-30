@@ -22,6 +22,7 @@ Model Evaluation: Evaluate its performance on a dataset and use metrics like pre
 Visualization Module: Create a way to visualize the model's detections against any original time series data
 
 HOW TO USE CODE:
+
 Packages to download (all through pip): numpy, scikit-learn, pandas, scipy, and matplotlib 
 1. Download 'Radar_Traffic_Counts.csv' and 'Test RadarCounts.csv' files, these will be shortened data files with 20,000 rows. (Full dataset can be downloaded at https://data.austintexas.gov/Transportation-and-Mobility/Radar-Traffic-Counts/i626-g7ub, by clicking export -> download. Exporting takes ~10-20 minutes due to their servers, and we can't upload these files to GitHub so the shortened file is a way to show our code works without waiting awhile for a download. The first file is used for preprocessing and the second file is used for analysis. Both are needed.
 2. Run 'TEA Learning Module.py' file, making sure that file_path is set to 'Test RadarCounts.csv' This script performs data preprocessing in portion 1, machine learning training and evaluation in portion 2, and data visualization in portion 3.
