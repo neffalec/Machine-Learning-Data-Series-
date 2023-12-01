@@ -1,29 +1,46 @@
 # ME369P-Final-Project-U07
-Repository for Group U07, TEA, final project
+### Repository for Group U07, TEA, final project
 
-High-Level Objective:
-Anomaly Detection in Time Series Data (Machine Learning Integration)
+---
 
-Data:
-The data set we are using is too large to upload so here is the link to the data instead: https://data.austintexas.gov/Transportation-and-Mobility/Radar-Traffic-Counts/i626-g7ub
-For our computers, the dataset was too large to save in Excel, so only the first 1 million rows were used in this project. All variable descriptions can be found at the link, however, some were excluded from the analysis as they proved to not be beneficial.
+## High-Level Objective
+**Anomaly Detection in Time Series Data (Machine Learning Integration)**
 
-Packages:
-SciPy: For regression analysis and signal noise cancellation
-Numpy: Numeric calculations
-Pandas: csv import and data reading
-SciKit-learn: For machine learning algorithms and evaluating models/data
-Matplotlib: To visualize the results in plots, figures, images, etc
+---
 
-Deliverables:
-Module Preprocessing: Process the data and standardize it in preparation for machine learning integration
-Machine Learning module: Train a model to detect anomalies in the preprocessed data (Isolation Forest). Confirm and correct hyperparameters before the learning process begins
-Model Evaluation: Evaluate its performance on a dataset and use metrics like precision, recall, or others to detect anomaly
-Visualization Module: Create a way to visualize the model's detections against any original time series data
+## Data
+- **Dataset Link:** [Radar Traffic Counts](https://data.austintexas.gov/Transportation-and-Mobility/Radar-Traffic-Counts/i626-g7ub)
+- **Usage Note:** Due to size constraints, we used only the first 1 million rows for this project. Full variable descriptions are available at the link. The only integer variable we considered as a feature in analysis was Speed. 
 
-HOW TO USE CODE:
+---
 
-Packages to download (all through pip): numpy, scikit-learn, pandas, scipy, and matplotlib 
-1. Download 'Radar_Traffic_Counts.csv' and 'Test RadarCounts.csv' files, these will be shortened data files with 20,000 rows. (Full dataset can be downloaded at https://data.austintexas.gov/Transportation-and-Mobility/Radar-Traffic-Counts/i626-g7ub, by clicking export -> download. Exporting takes ~10-20 minutes due to their servers, and we can't upload these files to GitHub so the shortened file is a way to show our code works without waiting awhile for a download. The first file is used for preprocessing and the second file is used for analysis. Both are needed.
-2. Run 'TEA Learning Module.py' file, making sure that file_path is set to 'Test RadarCounts.csv' This script performs data preprocessing in portion 1, machine learning training and evaluation in portion 2, and data visualization in portion 3.
-3. Visualizing the data: The first bar-graph subplots represent the average speeds driven at each hour of the day for the 3 most anomalous intersections. The second subplot shows a relationship between the volume of cars on the road versus the average speed traveled for that volume. **Note:** Speed limit data for top 3 intersections was manually entered. For different data sets this would need to be changed, but there was no simple way to scrub speed limit data for each intersection online given the time limits.
+## Packages
+- **SciPy:** Regression analysis and signal noise cancellation
+- **Numpy:** Numeric calculations
+- **Pandas:** CSV import and data handling
+- **SciKit-learn:** Machine learning algorithms and model/data evaluation
+- **Matplotlib:** Visualization of results (plots, figures, images, etc.)
+
+---
+
+## Deliverables
+1. **Module Preprocessing:** Process and standardize data for machine learning.
+2. **Machine Learning Module:** Train a model (Isolation Forest) to detect anomalies. Set and verify hyperparameters before training.
+3. **Model Evaluation:** Assess performance using metrics like precision and recall.
+4. **Visualization Module:** Visualize model detections against the original time series data.
+
+---
+
+## How to Use Code
+### Required Packages
+- Install via pip: `numpy`, `scikit-learn`, `pandas`, `scipy`, `matplotlib`
+
+### Steps
+1. Download `Radar_Traffic_Counts.csv` or `Test RadarCounts.csv` from this repository, or the full dataset [here](https://data.austintexas.gov/Transportation-and-Mobility/Radar-Traffic-Counts/i626-g7ub). The formers are shortened data files with 20,000 rows each that can be accurately scaled to the full-sized dataset.
+   - **Note:** Exporting the full dataset takes about 10-20 minutes. 
+2. Run `TEA Learning Module.py`, ensuring the `file_path` is set equal to the appropriate dataset, for example: `file_path = 'Test RadarCounts.csv'`. This script performs data preprocessing, machine learning training and evaluation, and data visualization.
+3. **Visualizing Data:** The first bar-graph subplots show average speeds at each hour for the 3 most anomalous intersections. The second subplot illustrates the relationship between car volume and average speed.
+   - **Speed Limit Data:** Manually entered for top 3 intersections. For different datasets, this needs to be updated. There was no simple way to extract speed limit data online within the project's time constraints.
+
+---
+
